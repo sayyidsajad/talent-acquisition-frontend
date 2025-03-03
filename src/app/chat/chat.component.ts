@@ -27,8 +27,12 @@ export class ChatComponent implements OnInit {
   ngOnInit() {
     this.chatHistory$ = this.chatService.chatHistory$;
     this.chatService.fetchChatHistory(this.userId);
+    this.chatHistory$.subscribe((messages) => {
+      if (messages.length > 0) {
+        this.chatService.setPdfUploaded(true);
+      }
+    });
   }
-
 
   sendMessage(message: string) {
     if (!message.trim()) return;
