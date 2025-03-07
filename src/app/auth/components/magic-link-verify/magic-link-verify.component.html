@@ -1,0 +1,13 @@
+<div class="verify-container">
+  <div *ngIf="isLoading" class="loading-message">
+    Verifying your magic link...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+</div>

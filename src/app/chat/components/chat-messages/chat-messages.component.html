@@ -1,22 +1,22 @@
-<div #chatContainer class="flex flex-col h-full overflow-y-auto space-y-4 pr-2">
+<div #chatContainer class="flex flex-col h-full overflow-y-auto space-y-4 pr-2 bg-[#f4e9d8]">
   <div
     *ngFor="let chat of chatHistory"
     class="flex"
     [ngClass]="chat.sender === 'user' ? 'justify-end' : 'justify-start'"
   >
     <div
-      class="px-4 py-3 max-w-md rounded-xl shadow-md"
+      class="px-4 py-3 max-w-md rounded-xl shadow-md border border-[#2b2b2b]"
       [ngClass]="
         chat.sender === 'user'
-          ? 'bg-blue-600 text-white rounded-br-none mr-4'
-          : 'bg-gray-200 text-gray-900 rounded-bl-none ml-4'
+          ? 'bg-[#3b2f2f] text-[#f4e9d8] rounded-br-none mr-4'
+          : 'bg-[#d3a87c] text-[#2b2b2b] rounded-bl-none ml-4'
       "
     >
       {{ chat.message }}
     </div>
   </div>
 
-  <div *ngIf="loading" class="text-left text-gray-500 italic">
+  <div *ngIf="loading" class="text-left text-[#a67c52] italic">
     AI is generating...
   </div>
 </div>
