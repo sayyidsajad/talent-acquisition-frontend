@@ -13,45 +13,9 @@ import { ChatMessage, ChatService } from '../../services/chat.service';
 export class ChatInputComponent {
   @Output() messageSend = new EventEmitter<string>();
   message = '';
-  pdfUploaded: boolean = false;
-  selectedFile: File | null = null;
-  uploadProgress = 0;
   parsedText: string = '';
 
-  constructor(private chatService: ChatService) {
-    this.chatService.pdfUploaded$.subscribe((status) => {
-      this.pdfUploaded = status;
-    });
-  }
-
-  onFileSelected(event: any) {
-    if (event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
-    }
-  }
-
-  uploadFile(userId: string) {
-    if (!this.selectedFile) return;
-
-    this.chatService.uploadPdf(userId, this.selectedFile).subscribe((event) => {
-      if (event.type === HttpEventType.UploadProgress && event.total) {
-        this.uploadProgress = Math.round((100 * event.loaded) / event.total);
-      } else if (event.type === HttpEventType.Response) {
-        this.chatService.setPdfUploaded(true);
-        if (event.body && event.body.firstQuestion) {
-          const firstQuestionMessage: ChatMessage = {
-            sender: 'ai',
-            message: event.body.firstQuestion,
-            id: '',
-            userId,
-            createdAt: new Date().toISOString(),
-          };
-
-          this.chatService.addMessage(firstQuestionMessage);
-        }
-      }
-    });
-  }
+  constructor() {}
 
   sendMessage() {
     if (this.message.trim()) {

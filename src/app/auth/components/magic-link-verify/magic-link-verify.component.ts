@@ -34,21 +34,27 @@ export class MagicLinkVerifyComponent {
   verifyToken(token: string): void {
     this.isLoading = true;
     this.authService.verifyMagicLink(token).subscribe({
-      next: (response: { jwtToken: string }) => {
+      next: (response: { data: { jwtToken: string; role: string } }) => {
         this.isLoading = false;
-        console.log(response);
-        
-        if (response.jwtToken) {
-          localStorage.setItem('jwtToken', response.jwtToken);
+        if (response.data.jwtToken) {
+          localStorage.setItem('jwtToken', response.data.jwtToken);
+          localStorage.setItem('role', response.data.role);
+
+          this.authService.updateLoginState();
+
           this.successMessage = 'You have successfully logged in!';
           setTimeout(() => {
-            this.router.navigate(['/job-feed']);
+            if (response.data.role === 'Candidate') {
+              this.router.navigate(['/job-feed']);
+            } else {
+              this.router.navigate(['/hr']);
+            }
           }, 1500);
         } else {
           this.errorMessage = 'Invalid or expired token.';
         }
       },
-      error: (err) => {
+      error: () => {
         this.isLoading = false;
         this.errorMessage = 'An error occurred. Please try again.';
       },

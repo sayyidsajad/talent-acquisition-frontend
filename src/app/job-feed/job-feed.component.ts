@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { JobService } from './services/job.service';
 import { Job, JobResponse } from './models/job.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-job-feed',
@@ -14,7 +15,7 @@ export class JobFeedComponent {
   loading: boolean = true;
   error: string | null = null;
 
-  constructor(private jobService: JobService) {}
+  constructor(private jobService: JobService, private router: Router) {}
 
   ngOnInit(): void {
     this.fetchJobs();
@@ -32,5 +33,21 @@ export class JobFeedComponent {
         this.loading = false;
       },
     });
+  }
+  attendInterview(jobId: string) {
+    this.jobService.attendInterview(jobId).subscribe({
+      next: () => {
+        this.router.navigate(['/chat']);
+      },
+      error: (err) => {
+        console.error('Error during API call:', err);
+      },
+    });
+  }
+
+  logout(): void {
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('role');
+    this.router.navigate(['/auth']);
   }
 }

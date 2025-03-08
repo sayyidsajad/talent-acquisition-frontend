@@ -8,6 +8,7 @@ import {
   FormsModule,
 } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -19,17 +20,23 @@ export class LoginComponent {
   loginForm: FormGroup;
   loading = false;
   errorMessage: string = '';
-  isHr = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.authService.isLoggedIn$.subscribe((isLoggedIn) => {
+      if (isLoggedIn && this.authService.getRole() === 'Candidate') {
+        this.router.navigate(['/job-feed']);
+      } else {
+        this.router.navigate(['/hr']);
+      }
+    });
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       role: [false],
     });
-  }
-
-  toggleRole() {
-    this.isHr = !this.isHr;
   }
 
   login() {
@@ -39,17 +46,20 @@ export class LoginComponent {
     this.errorMessage = '';
 
     const { email, role } = this.loginForm.value;
+    const roleString = role ? 'HR' : 'Candidate';
 
-    this.authService.login(email, role).subscribe({
-      next: (response: { success: any }) => {
+    this.authService.login(email, roleString).subscribe({
+      next: (response: { message: string }) => {
         this.loading = false;
-        if (response && response.success) {
-          alert(`Login successful as ${role ? 'HR' : 'Candidate'}`);
+
+        if (response?.message) {
+          alert(`${response.message}`);
+          this.loginForm.reset();
         } else {
           this.errorMessage = 'Invalid credentials. Please try again.';
         }
       },
-      error: (error) => {
+      error: () => {
         this.loading = false;
         this.errorMessage = 'An error occurred. Please try again later.';
       },

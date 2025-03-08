@@ -1,13 +1,13 @@
-<div class="verify-container">
-  <div *ngIf="isLoading" class="loading-message">
-    Verifying your magic link...
+<div class="verify-container px-6 py-8 bg-[#F4EBD0] text-[#3B2F2F]">
+  <div *ngIf="isLoading" class="loading-message text-center py-4 px-6 bg-[#D9C2A6] rounded-lg shadow-md border border-[#8B5E3B]">
+    <p class="text-lg font-semibold text-[#3B2F2F]">Verifying your magic link...</p>
   </div>
 
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
+  <div *ngIf="errorMessage" class="error-message text-center py-4 px-6 bg-[#F4EBD0] text-[#9B2C2C] rounded-lg shadow-md border border-[#8B5E3B]">
+    <p class="text-lg font-semibold">{{ errorMessage }}</p>
   </div>
 
-  <div *ngIf="successMessage" class="success-message">
-    {{ successMessage }}
+  <div *ngIf="successMessage" class="success-message text-center py-4 px-6 bg-[#8B5E3B] text-[#F4EBD0] rounded-lg shadow-md border border-[#8B5E3B]">
+    <p class="text-lg font-semibold">{{ successMessage }}</p>
   </div>
 </div>

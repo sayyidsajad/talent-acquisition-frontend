@@ -7,11 +7,14 @@ import { Job, JobResponse } from '../models/job.model';
   providedIn: 'root',
 })
 export class JobService {
-  private apiUrl = 'http://localhost:3000/job';
+  private apiUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {}
 
   getJobs(): Observable<JobResponse> {
-    return this.http.get<JobResponse>(this.apiUrl);
+    return this.http.get<JobResponse>(`${this.apiUrl}/job`);
+  }
+  attendInterview(jobId: string): Observable<any> {    
+    return this.http.get<any>(`${this.apiUrl}/chat/generate-question/${jobId}`);
   }
 }
