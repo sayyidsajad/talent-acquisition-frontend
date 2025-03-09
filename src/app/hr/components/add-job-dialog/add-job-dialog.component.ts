@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { ChatService } from '../../../chat/services/chat.service';
 import { HttpEventType } from '@angular/common/http';
 @Component({
@@ -10,9 +10,12 @@ import { HttpEventType } from '@angular/common/http';
 })
 export class AddJobDialogComponent {
   isOpen = false;
-  pdfUploaded: boolean = false;
+  pdfUploaded = false;
   selectedFile: File | null = null;
   uploadProgress = 0;
+  isUploading = false;
+
+  @Output() jobUploaded = new EventEmitter<void>();
 
   constructor(private chatService: ChatService) {}
 
@@ -22,22 +25,42 @@ export class AddJobDialogComponent {
     }
   }
 
-  uploadFile(userId: string) {
+  uploadFile() {
     if (!this.selectedFile) return;
 
-    this.chatService.uploadPdf(userId, this.selectedFile).subscribe((event) => {
-      if (event.type === HttpEventType.UploadProgress && event.total) {
-        this.uploadProgress = Math.round((100 * event.loaded) / event.total);
-      } else if (event.type === HttpEventType.Response) {
-        this.pdfUploaded = true;
+    this.isUploading = true;
+    this.chatService.uploadPdf(this.selectedFile).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.uploadProgress = Math.round((100 * event.loaded) / event.total);
+        } else if (event.type === HttpEventType.Response) {
+          this.isUploading = false;
+          this.pdfUploaded = true;
+          alert('Job uploaded successfully!');
+          this.jobUploaded.emit();
+          this.close();
+        }
+      },
+      error: () => {
+        this.isUploading = false;
+        alert('Failed to upload job.');
       }
     });
   }
+
   open() {
     this.isOpen = true;
   }
 
   close() {
     this.isOpen = false;
+    this.reset();
+  }
+
+  reset() {
+    this.pdfUploaded = false;
+    this.selectedFile = null;
+    this.uploadProgress = 0;
+    this.isUploading = false;
   }
 }

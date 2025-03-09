@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   templateUrl: './job-feed.component.html',
 })
 export class JobFeedComponent {
-  jobs: Job[] = [];
+  jobs: any[] = [];
   loading: boolean = true;
   error: string | null = null;
 
@@ -24,27 +24,25 @@ export class JobFeedComponent {
     this.loading = true;
     this.jobService.getJobs().subscribe({
       next: (response: JobResponse) => {
-        this.jobs = response.data;
+        this.jobs = response.data.map(job => ({
+          ...job,
+          attended: job.interviews?.length > 0,
+        }));
+
+        this.jobs.sort((a, b) => Number(a.attended) - Number(b.attended));
+
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load jobs';
         console.error('Error fetching jobs:', err);
+        this.error = 'Failed to load jobs. Please try again later.';
         this.loading = false;
       },
     });
   }
   attendInterview(jobId: string) {
-    this.jobService.attendInterview(jobId).subscribe({
-      next: () => {
-        this.router.navigate(['/chat']);
-      },
-      error: (err) => {
-        console.error('Error during API call:', err);
-      },
-    });
+    this.router.navigate(['/chat'], { queryParams: { jobId } });
   }
-
   logout(): void {
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('role');

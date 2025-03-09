@@ -6,13 +6,13 @@ import { MagicLinkVerifyComponent } from './auth/components/magic-link-verify/ma
 import { AuthGuard } from './auth/guards/auth.guard';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { HrComponent } from './hr/hr.component';
+import { RedirectComponent } from './redirect/redirect.component';
+import { ChatGuard } from './chat/guards/chat.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '',
-    pathMatch: 'full',
-    canActivate: [AuthGuard],
+    component: RedirectComponent,
   },
   {
     path: 'job-feed',
@@ -24,6 +24,7 @@ export const routes: Routes = [
     path: 'chat',
     component: ChatComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [ChatGuard],
     data: { role: 'Candidate' },
   },
   {

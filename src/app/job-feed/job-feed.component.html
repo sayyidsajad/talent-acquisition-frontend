@@ -1,39 +1,24 @@
-<div class="overflow-x-hidden bg-[#F4EBD0] text-[#3B2F2F]">
+<div class="min-h-screen flex flex-col bg-[#F4EBD0] text-[#3B2F2F]">
   <nav class="px-6 py-4 bg-[#8B5E3B] shadow">
     <div class="container flex flex-col mx-auto md:flex-row md:items-center md:justify-between">
       <div class="flex items-center justify-between w-full">
-        <div>
-          <a href="#" class="text-xl font-bold text-[#F4EBD0] md:text-2xl font-mono">Talent Candidate</a>
-        </div>
+        <a href="#" class="text-xl font-bold text-[#F4EBD0] md:text-2xl font-mono">Talent Candidate</a>
         <div class="flex items-center space-x-4 ml-auto">
           <button (click)="logout()" type="button" class="transition duration-200 bg-[#D9C2A6] hover:bg-[#6F4730] focus:bg-[#6F4730] focus:ring-4 focus:ring-[#D9C2A6] focus:ring-opacity-50 text-[#3B2F2F] py-2 px-4 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold">
             Logout
-          </button>
-          <button type="button" class="block text-[#F4EBD0] hover:text-[#D9C2A6] focus:outline-none md:hidden">
-            <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current">
-              <path d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2z"></path>
-            </svg>
           </button>
         </div>
       </div>
     </div>
   </nav>
-  
-  <div class="px-6 py-8">
-    <div class="container flex justify-between mx-auto">
-      <div class="w-full">
-        <div class="flex items-center justify-between">
-          <h1 class="text-xl font-bold text-[#3B2F2F] md:text-2xl font-mono">Jobs</h1>
-          <div>
-            <select class="w-full border-[#8B5E3B] bg-[#F4EBD0] rounded-md shadow-sm focus:ring focus:ring-[#D9C2A6]">
-              <option>Latest</option>
-              <option>Last Week</option>
-            </select>
-          </div>
-        </div>
 
-        <div class="mt-6" *ngFor="let job of jobs">
-          <div class="max-w-4xl px-10 py-6 mx-auto bg-[#D9C2A6] rounded-lg shadow-md border border-[#8B5E3B]">
+  <div class="px-6 py-8 flex-grow flex flex-col">
+    <div class="container mx-auto w-full flex flex-col items-center">
+      <h1 class="text-xl font-bold text-[#3B2F2F] md:text-2xl font-mono">Jobs</h1>
+
+      <div *ngIf="jobs.length > 0; else noJobs">
+        <div class="mt-6 w-full max-w-4xl" *ngFor="let job of jobs">
+          <div class="px-10 py-6 bg-[#D9C2A6] rounded-lg shadow-md border border-[#8B5E3B]">
             <div class="flex items-center justify-between">
               <span class="font-light text-[#3B2F2F]">Posted on: Feb 25, 2025</span>
               <span class="px-2 py-1 font-bold text-[#F4EBD0] bg-[#8B5E3B] rounded hover:bg-[#6F4730]">
@@ -60,41 +45,42 @@
             </div>
 
             <div class="flex items-center justify-between mt-4">
-              <div>
-                <a class="flex items-center">
-                  <button (click)="attendInterview(job.id)" class="font-bold bg-[#8B5E3B] text-[#F4EBD0] rounded-md px-2 hover:bg-[#6F4730]">
-                    Attend Interview
-                  </button>
-                </a>
-              </div>
+              <button
+              *ngIf="!job.attended"
+              (click)="attendInterview(job.id)"
+              class="font-bold bg-[#8B5E3B] text-[#F4EBD0] rounded-md px-2 hover:bg-[#6F4730]"
+            >
+              Attend Interview
+            </button>
+            
+            <span
+              *ngIf="job.attended"
+              class="font-bold text-[#3B2F2F] bg-[#F4EBD0] rounded-md px-2"
+            >
+              Attended
+            </span>
             </div>
           </div>
         </div>
 
-        <div class="mt-8">
-          <div class="flex">
-            <a href="#" class="px-3 py-2 mx-1 font-medium text-[#8B5E3B] bg-[#D9C2A6] rounded-md cursor-not-allowed">
-              previous
-            </a>
-
-            <a href="#" class="px-3 py-2 mx-1 font-medium text-[#3B2F2F] bg-[#F4EBD0] rounded-md hover:bg-[#8B5E3B] hover:text-[#F4EBD0]">
-              1
-            </a>
-
-            <a href="#" class="px-3 py-2 mx-1 font-medium text-[#3B2F2F] bg-[#F4EBD0] rounded-md hover:bg-[#8B5E3B] hover:text-[#F4EBD0]">
-              2
-            </a>
-
-            <a href="#" class="px-3 py-2 mx-1 font-medium text-[#3B2F2F] bg-[#F4EBD0] rounded-md hover:bg-[#8B5E3B] hover:text-[#F4EBD0]">
-              3
-            </a>
-
-            <a href="#" class="px-3 py-2 mx-1 font-medium text-[#3B2F2F] bg-[#F4EBD0] rounded-md hover:bg-[#8B5E3B] hover:text-[#F4EBD0]">
-              Next
-            </a>
-          </div>
+        <div class="mt-8 flex">
+          <a href="#" class="px-3 py-2 mx-1 font-medium text-[#8B5E3B] bg-[#D9C2A6] rounded-md cursor-not-allowed">
+            Previous
+          </a>
+          <a href="#" class="px-3 py-2 mx-1 font-medium text-[#3B2F2F] bg-[#F4EBD0] rounded-md hover:bg-[#8B5E3B] hover:text-[#F4EBD0]">
+            1
+          </a>
+          <a href="#" class="px-3 py-2 mx-1 font-medium text-[#3B2F2F] bg-[#F4EBD0] rounded-md hover:bg-[#8B5E3B] hover:text-[#F4EBD0]">
+            Next
+          </a>
         </div>
       </div>
+
+      <ng-template #noJobs>
+        <div class="flex-grow flex items-center justify-center">
+          <p class="text-2xl font-bold text-[#8B5E3B]">No jobs available</p>
+        </div>
+      </ng-template>
     </div>
   </div>
 </div>

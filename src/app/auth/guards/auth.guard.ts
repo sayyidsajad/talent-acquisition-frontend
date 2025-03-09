@@ -21,7 +21,12 @@ export class AuthGuard implements CanActivate {
       return this.handleUnauthenticatedUser(currentPath);
     }
 
-    return this.handleAuthenticatedUser(route, role, currentPath);
+    if (currentPath === '/' || currentPath === '') {
+      this.redirectBasedOnRole(role);
+      return false;
+    }
+
+    return this.handleAuthenticatedUser(route, role);
   }
 
   private handleUnauthenticatedUser(currentPath: string): boolean {
@@ -32,17 +37,11 @@ export class AuthGuard implements CanActivate {
     return false;
   }
 
-  private handleAuthenticatedUser(route: ActivatedRouteSnapshot, role: string | null, currentPath: string): boolean {
-    if (currentPath.startsWith('/auth')) {
-      this.redirectBasedOnRole(role);
-      return false;
-    }
-
+  private handleAuthenticatedUser(route: ActivatedRouteSnapshot, role: string | null): boolean {
     if (route.data['role'] && route.data['role'] !== role) {
       this.redirectBasedOnRole(role);
       return false;
     }
-
     return true;
   }
 

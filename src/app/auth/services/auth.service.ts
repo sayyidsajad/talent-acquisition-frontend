@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { API_URLS } from '../../common/url';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private loginUrl = 'http://localhost:3000';
+  private apiUrl = API_URLS.BASE_URL;
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
@@ -18,11 +19,11 @@ export class AuthService {
   }
 
   login(email: string, role: string): Observable<any> {
-    return this.http.post(`${this.loginUrl}/auth/login`, { email, role });
+    return this.http.post(`${this.apiUrl}/auth/login`, { email, role });
   }
 
   verifyMagicLink(token: string): Observable<any> {
-    return this.http.get(`${this.loginUrl}/auth/verify?token=${token}`);
+    return this.http.get(`${this.apiUrl}/auth/verify?token=${token}`);
   }
 
   logout() {

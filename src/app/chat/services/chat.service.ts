@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { API_URLS } from '../../common/url';
 
 export interface ChatMessage {
   id: string;
-  userId: string;
+  userId?: string;
   sender: 'user' | 'ai';
   message: string;
   createdAt: string;
@@ -17,50 +18,48 @@ export interface ChatMessage {
 export class ChatService {
   private pdfUploadedSubject = new BehaviorSubject<boolean>(false);
   pdfUploaded$ = this.pdfUploadedSubject.asObservable();
-  private apiUrl = 'http://localhost:3000';
+
+  private apiUrl = API_URLS.BASE_URL;
   private chatHistory = new BehaviorSubject<ChatMessage[]>([]);
   chatHistory$ = this.chatHistory.asObservable();
+
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  sendMessage(userId: string, message: string): Observable<ChatMessage> {
+  sendMessage(jobId: string, message: string): Observable<any> {
     const userMessage: ChatMessage = {
       sender: 'user',
       message,
       id: '',
-      userId,
       createdAt: new Date().toISOString(),
     };
 
     const currentMessages = this.chatHistory.value;
     this.chatHistory.next([...currentMessages, userMessage]);
-
     this.loadingSubject.next(true);
 
     return this.http
-      .post<ChatMessage>(`${this.apiUrl}/chat`, { userId, message })
+      .post<any>(`${this.apiUrl}/chat/message`, { jobId, message })
       .pipe(
         tap((response) => {
           const aiMessage: ChatMessage = {
             sender: 'ai',
             message: response.message,
             id: response.id || '',
-            userId: userId,
             createdAt: response.createdAt || new Date().toISOString(),
           };
-
           this.chatHistory.next([...this.chatHistory.value, aiMessage]);
           this.loadingSubject.next(false);
         })
       );
   }
 
-  fetchChatHistory(userId: string) {
+  fetchChatHistory(jobId: string) {
     this.http
       .get<{ success: boolean; data: ChatMessage[] }>(
-        `${this.apiUrl}/chat/${userId}/history`
+        `${this.apiUrl}/chat/history/${jobId}`
       )
       .subscribe((response) => {
         if (response.success) {
@@ -69,25 +68,45 @@ export class ChatService {
       });
   }
 
-  uploadPdf(userId: string, file: File): Observable<HttpEvent<any>> {
+  addMessage(message: ChatMessage) {
+    const currentMessages = this.chatHistory.value;
+    this.chatHistory.next([...currentMessages, message]);
+  }
+
+  setPdfUploaded(value: boolean) {
+    this.pdfUploadedSubject.next(value);
+  }
+
+  initializeInterview(jobId: string): Observable<any> {
+    this.loadingSubject.next(true);
+    return this.http
+      .get<any>(`${this.apiUrl}/chat/initialize-interview/${jobId}`)
+      .pipe(
+        tap((response) => {
+          if (response.success && response.message) {
+            const aiMessage: ChatMessage = {
+              sender: 'ai',
+              message: response.message,
+              id: response.id || '',
+              createdAt: new Date().toISOString(),
+            };
+            this.chatHistory.next([aiMessage]);
+          }
+          this.loadingSubject.next(false);
+        })
+      );
+  }
+
+  uploadPdf(file: File): Observable<HttpEvent<any>> {
     const formData = new FormData();
     formData.append('pdf', file);
     return this.http.post<{
       success: boolean;
       message: string;
       firstQuestion: string;
-    }>(`${this.apiUrl}/chat/${userId}/upload-pdf`, formData, {
+    }>(`${this.apiUrl}/chat/upload-pdf`, formData, {
       reportProgress: true,
       observe: 'events',
     });
-  }
-
-  addMessage(message: ChatMessage) {
-    const currentMessages = this.chatHistory.value;
-    this.chatHistory.next([...currentMessages, message]);
-  }
-
-  setPdfUploaded(status: boolean) {
-    this.pdfUploadedSubject.next(status);
   }
 }

@@ -6,7 +6,9 @@ export interface Job {
   salary: string;
   experience: string;
   description: string;
+  createdAt: string;
   requirements: string[];
+  interviews: any[];
 }
 
 export interface JobResponse {

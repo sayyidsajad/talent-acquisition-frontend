@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpEventType } from '@angular/common/http';
-import { ChatMessage, ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-chat-input',
@@ -13,9 +11,8 @@ import { ChatMessage, ChatService } from '../../services/chat.service';
 export class ChatInputComponent {
   @Output() messageSend = new EventEmitter<string>();
   message = '';
-  parsedText: string = '';
 
-  constructor() {}
+  parsedText: string = '';
 
   sendMessage() {
     if (this.message.trim()) {
