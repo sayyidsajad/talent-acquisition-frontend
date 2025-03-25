@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { JobResponse } from '../models/job.model';
 import { API_URLS } from '../../common/url';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class JobService {
-  private apiUrl = API_URLS.BASE_URL;
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

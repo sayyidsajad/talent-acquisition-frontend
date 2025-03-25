@@ -3,6 +3,7 @@ import { HttpClient, HttpEvent } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { API_URLS } from '../../common/url';
+import { environment } from '../../../environments/environment';
 
 export interface ChatMessage {
   id: string;
@@ -19,7 +20,7 @@ export class ChatService {
   private pdfUploadedSubject = new BehaviorSubject<boolean>(false);
   pdfUploaded$ = this.pdfUploadedSubject.asObservable();
 
-  private apiUrl = API_URLS.BASE_URL;
+  private apiUrl = environment.apiUrl;
   private chatHistory = new BehaviorSubject<ChatMessage[]>([]);
   chatHistory$ = this.chatHistory.asObservable();
 
