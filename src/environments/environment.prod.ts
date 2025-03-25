@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: process.env['BASE_URL'],
+  apiUrl: 'https://talent-acquisition-backend.onrender.com',
   debugMode: false,
 };
