@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { API_URLS } from '../../common/url';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
+
 
 export interface ChatMessage {
   id: string;
